@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+host/node_modules/
+
+# Logs & debug files
+*.log
+host/debug.log
+npm-debug.log*
+
+# Output archives & artifacts
+artifacts/
+*.zip
+*.xpi
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

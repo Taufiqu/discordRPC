@@ -1,0 +1,13 @@
+{
+  "name": "discord-rpc-native-host",
+  "version": "1.0.0",
+  "description": "Discord RPC Native Messaging Host for Browser Extension",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@xhayper/discord-rpc": "^1.2.3"
+  }
+}

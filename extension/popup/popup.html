@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Discord RPC - YT Music</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="card">
+    <header class="header">
+      <div class="logo-group">
+        <div class="status-indicator" id="overallStatusDot"></div>
+        <h1>Discord RPC</h1>
+      </div>
+      <label class="switch" title="Toggle Rich Presence">
+        <input type="checkbox" id="rpcToggle" checked>
+        <span class="slider"></span>
+      </label>
+    </header>
+
+    <div class="connections-panel">
+      <div class="status-badge" id="bridgeBadge">
+        <span class="dot"></span>
+        <span class="badge-label">Bridge Host: <strong id="bridgeStatusText">Connecting...</strong></span>
+      </div>
+      <div class="status-badge" id="discordBadge">
+        <span class="dot"></span>
+        <span class="badge-label">Discord: <strong id="discordStatusText">Searching...</strong></span>
+      </div>
+    </div>
+
+    <section class="player-card" id="playerCard">
+      <div class="artwork-wrapper">
+        <img id="trackArtwork" src="../icons/icon128.png" alt="Cover Artwork">
+        <div class="play-indicator" id="playStateBadge">▶</div>
+      </div>
+      <div class="track-details">
+        <div class="track-title" id="trackTitle">No track playing</div>
+        <div class="track-artist" id="trackArtist">Open YouTube Music</div>
+        <div class="track-album" id="trackAlbum"></div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <span>App ID: <code>1538229883279380510</code></span>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+    "name":  "com.discordrpc.bridge",
+    "description":  "Discord RPC Native Messaging Host Bridge",
+    "path":  "D:\\Projekan\\discordRPC\\host\\host.bat",
+    "type":  "stdio",
+    "allowed_origins":  [
+                            "chrome-extension://*/"
+                        ]
+}
