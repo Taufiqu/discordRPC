@@ -1,9 +1,9 @@
 {
-    "name":  "com.discordrpc.bridge",
-    "description":  "Discord RPC Native Messaging Host Bridge for Firefox",
-    "path":  "D:\\Projekan\\discordRPC\\host\\host.bat",
-    "type":  "stdio",
-    "allowed_extensions":  [
-                               "discordrpc@local.bridge"
-                           ]
+  "name": "com.discordrpc.bridge",
+  "description": "Discord RPC Native Messaging Host Bridge for Firefox",
+  "path": "/home/taufiqu/Documents/Dev/discordRPC/host/host.sh",
+  "type": "stdio",
+  "allowed_extensions": [
+    "discordrpc@local.bridge"
+  ]
 }

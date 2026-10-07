@@ -9,7 +9,47 @@
   }
 
   function getMediaElement() {
-    return document.querySelector('video');
+    return (
+      document.querySelector('video.video-stream.html5-main-video') ||
+      document.querySelector('ytmusic-player video') ||
+      document.querySelector('#movie_player video') ||
+      document.querySelector('video')
+    );
+  }
+
+  function isPlaybackPaused(video) {
+    // 1. MediaSession API (YouTube Music sets this reliably)
+    if (navigator.mediaSession?.playbackState === 'paused') {
+      return true;
+    }
+    if (navigator.mediaSession?.playbackState === 'playing') {
+      return false;
+    }
+
+    // 2. Play/Pause button aria-label & title
+    const playPauseBtn = document.querySelector('ytmusic-player-bar #play-pause-button');
+    if (playPauseBtn) {
+      const label = (
+        playPauseBtn.getAttribute('aria-label') ||
+        playPauseBtn.getAttribute('title') ||
+        ''
+      ).toLowerCase();
+      // If button indicates Play action (Play, Putar, etc.), playback is currently paused
+      if (label.includes('play') || label.includes('putar') || label.includes('reproducir') || label.includes('lire')) {
+        return true;
+      }
+      // If button indicates Pause action (Pause, Jeda, etc.), playback is currently playing
+      if (label.includes('pause') || label.includes('jeda')) {
+        return false;
+      }
+    }
+
+    // 3. Fallback to HTML5 video element state
+    if (video) {
+      return video.paused || video.ended;
+    }
+
+    return true;
   }
 
   function isAdPlaying() {
@@ -88,9 +128,29 @@
       songUrl = window.location.href;
     }
 
-    const isPaused = video.paused || video.ended;
-    const currentTime = Math.floor(video.currentTime || 0);
-    const duration = Math.floor(video.duration || 0);
+    const isPaused = isPlaybackPaused(video);
+    let currentTime = Math.floor(video?.currentTime || 0);
+    let duration = Math.floor(video?.duration || 0);
+
+    // Fallback: parse time from player bar if video duration is unavailable or 0
+    if (!duration || isNaN(duration)) {
+      const timeInfoEl = playerBar.querySelector('.time-info.ytmusic-player-bar') || playerBar.querySelector('#time-info');
+      if (timeInfoEl && timeInfoEl.textContent) {
+        const parts = timeInfoEl.textContent.split('/');
+        if (parts.length === 2) {
+          const parseTime = (str) => {
+            const p = str.trim().split(':').map(Number);
+            if (p.length === 2) return p[0] * 60 + p[1];
+            if (p.length === 3) return p[0] * 3600 + p[1] * 60 + p[2];
+            return 0;
+          };
+          const cur = parseTime(parts[0]);
+          const total = parseTime(parts[1]);
+          if (cur > 0 && !currentTime) currentTime = cur;
+          if (total > 0) duration = total;
+        }
+      }
+    }
 
     if (!title || title === '' || isAdPlaying()) {
       return null;
@@ -131,7 +191,7 @@
         lastTrackInfo.title !== trackData.title ||
         lastTrackInfo.artist !== trackData.artist ||
         lastTrackInfo.isPaused !== trackData.isPaused ||
-        Math.abs((lastTrackInfo.currentTime || 0) - trackData.currentTime) > 3;
+        (!trackData.isPaused && Math.abs((lastTrackInfo.currentTime || 0) - trackData.currentTime) > 3);
 
       if (dataChanged) {
         lastTrackInfo = trackData;
@@ -159,6 +219,14 @@
       });
     }
 
+    // Listen on play-pause button click
+    const playPauseBtn = document.querySelector('ytmusic-player-bar #play-pause-button');
+    if (playPauseBtn) {
+      playPauseBtn.addEventListener('click', () => {
+        setTimeout(checkState, 100);
+      });
+    }
+
     // MutationObserver on player bar
     const playerBar = document.querySelector('ytmusic-player-bar');
     if (playerBar) {
@@ -168,7 +236,7 @@
         subtree: true,
         characterData: true,
         attributes: true,
-        attributeFilter: ['src', 'title', 'aria-valuenow']
+        attributeFilter: ['src', 'title', 'aria-valuenow', 'aria-label']
       });
     }
   }

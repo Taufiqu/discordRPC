@@ -81,27 +81,29 @@ function updatePresence(trackData) {
 
   currentTrack = trackData;
 
+  const detailsText = trackData.artist ? `${trackData.title} - ${trackData.artist}` : trackData.title;
+  let stateText = trackData.album || '';
+
   if (trackData.isPaused) {
-    // Clear Discord presence when paused to avoid ghost stopwatch timer
-    sendToNative({ action: 'CLEAR_ACTIVITY' });
-  } else {
-    sendToNative({
-      action: 'SET_ACTIVITY',
-      payload: {
-        details: trackData.title,
-        state: trackData.album ? `${trackData.artist} — ${trackData.album}` : trackData.artist,
-        largeImageKey: trackData.artworkUrl || 'ytmusic_logo',
-        largeImageText: trackData.album || trackData.title,
-        smallImageKey: 'ytmusic_logo',
-        smallImageText: 'Playing on YouTube Music',
-        startTimestamp: trackData.startTimestamp,
-        endTimestamp: trackData.endTimestamp,
-        buttons: trackData.songUrl ? [
-          { label: 'Listen on YT Music', url: trackData.songUrl }
-        ] : undefined
-      }
-    });
+    stateText = trackData.album ? `${trackData.album} • Paused` : 'Paused';
   }
+
+  sendToNative({
+    action: 'SET_ACTIVITY',
+    payload: {
+      details: detailsText,
+      state: stateText || undefined,
+      largeImageKey: trackData.artworkUrl || 'ytmusic_logo',
+      largeImageText: trackData.album ? `${trackData.album}` : trackData.title,
+      smallImageKey: 'ytmusic_logo',
+      smallImageText: trackData.isPaused ? 'Paused' : 'Playing',
+      startTimestamp: !trackData.isPaused ? trackData.startTimestamp : undefined,
+      endTimestamp: !trackData.isPaused ? trackData.endTimestamp : undefined,
+      buttons: trackData.songUrl ? [
+        { label: 'Listen on YT Music', url: trackData.songUrl }
+      ] : undefined
+    }
+  });
 }
 
 function clearPresence() {

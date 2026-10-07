@@ -43,7 +43,16 @@ A lightweight, seamless browser extension (Manifest V3) and Native Messaging Hos
 
 ## 🚀 Quick Setup & Installation
 
-### 1. Register Native Messaging Host (Windows)
+### 1. Register Native Messaging Host
+
+#### **Linux:**
+Jalankan script registrasi di folder `host/`:
+```bash
+chmod +x host/register_host.sh host/host.sh
+./host/register_host.sh
+```
+
+#### **Windows:**
 Run PowerShell script or batch file inside `host/`:
 ```powershell
 powershell -ExecutionPolicy Bypass -File host/register_host.ps1
