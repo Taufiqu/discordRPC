@@ -1,4 +1,4 @@
-name: Build & Sign Firefox Extension
+name: Build, Sign & Release
 
 on:
   push:
@@ -8,8 +8,11 @@ on:
       - 'v*'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
-  build-and-sign:
+  build-and-release:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,13 +30,29 @@ jobs:
       - name: Lint Extension
         run: web-ext lint --source-dir=extension
 
-      - name: Sign Extension with Mozilla AMO
+      - name: Prepare Artifacts Directory
+        run: mkdir -p artifacts
+
+      - name: Package Chromium Extension
         if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+        run: |
+          VERSION="${{ github.ref_name }}"
+          [ -z "$VERSION" ] && VERSION="latest"
+          (cd extension && zip -r "../artifacts/youtube_music_discord_rpc-chromium-${VERSION}.zip" . -x "*.amo-upload-uuid*")
+
+      - name: Package Host Bridge
+        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+        run: |
+          VERSION="${{ github.ref_name }}"
+          [ -z "$VERSION" ] && VERSION="latest"
+          (cd host && zip -r "../artifacts/discord_rpc_host-${VERSION}.zip" . -x "node_modules/*" -x "debug.log" -x "*.log")
+
+      - name: Sign Extension with Mozilla AMO
+        if: (startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch') && env.AMO_JWT_ISSUER != ''
         env:
           AMO_JWT_ISSUER: ${{ secrets.AMO_JWT_ISSUER }}
           AMO_JWT_SECRET: ${{ secrets.AMO_JWT_SECRET }}
         run: |
-          mkdir -p artifacts
           web-ext sign \
             --source-dir=extension \
             --channel=unlisted \
@@ -41,17 +60,18 @@ jobs:
             --api-secret="$AMO_JWT_SECRET" \
             --artifacts-dir=artifacts
 
-      - name: Upload Signed XPI Artifact
+      - name: Upload Build Artifacts
         if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@v4
         with:
-          name: signed-firefox-extension
-          path: artifacts/*.xpi
+          name: release-artifacts
+          path: artifacts/*
 
       - name: Create GitHub Release (Only on Git Tags)
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: artifacts/*.xpi
+          files: artifacts/*
+          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

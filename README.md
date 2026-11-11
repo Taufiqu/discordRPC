@@ -27,52 +27,28 @@ A lightweight, high-performance browser extension (Manifest V3) paired with a lo
 
 ---
 
-## 🚀 Installation & Setup
+## 🚀 Quick Installation
 
-Choose your preferred path below. For complete step-by-step instructions, see the **[Detailed Installation Guide](docs/INSTALLATION.md)**.
+### Step 1: Install the Extension
+- **Mozilla Firefox:** Download the signed `.xpi` file from the [Releases](https://github.com/Taufiqu/discordRPC/releases) page and drag-and-drop it into Firefox (or install via Firefox Add-ons).
+- **Chromium (Chrome / Brave / Edge):** Download `youtube_music_discord_rpc-chromium-*.zip` from [Releases](https://github.com/Taufiqu/discordRPC/releases), extract it, and load it via `chrome://extensions` (Enable **Developer Mode** ➔ click **Load unpacked**).
 
-### 👤 Option A: General User Installation (No Git / Coding Needed)
+### Step 2: Install the Discord Bridge (1-Line Command)
+Open your terminal and paste one command to automatically download, install dependencies, and register the bridge:
 
-1. **Install Extension:**
-   - **Firefox:** Download the signed `.xpi` file from [Releases](https://github.com/Taufiqu/discordRPC/releases) and drag-and-drop it into Firefox (or install directly from Firefox Add-ons).
-   - **Chromium (Chrome / Brave / Edge):** Download `extension.zip` from [Releases](https://github.com/Taufiqu/discordRPC/releases), unpack it, and load it via `chrome://extensions` (Developer Mode ➔ Load unpacked).
-2. **Register the Local Discord Bridge:**
-   - Download the bridge files from [Releases](https://github.com/Taufiqu/discordRPC/releases).
-   - **Windows:** Double-click `register_host.bat`.
-   - **Linux:** Run `./register_host.sh` in terminal.
-3. **Play Music:**
-   - Make sure Discord Desktop is open and your activity status is enabled.
-   - Open [music.youtube.com](https://music.youtube.com/) and play your favorite tracks!
-
-👉 **[Read Full User Guide](docs/INSTALLATION.md#-method-a-general-user-installation-recommended)**
-
----
-
-### 💻 Option B: Developer & Manual Setup
-
-For developers who want to modify code, build locally, or contribute:
-
-```bash
-# 1. Clone repository
-git clone https://github.com/Taufiqu/discordRPC.git
-cd discordRPC
-
-# 2. Install host dependencies & register bridge
-cd host
-npm install
-
-# Linux:
-chmod +x register_host.sh host.sh && ./register_host.sh
-
-# Windows (PowerShell):
-powershell -ExecutionPolicy Bypass -File register_host.ps1
-
-# 3. Load extension in Developer Mode
-# - Firefox: about:debugging -> Load Temporary Add-on -> select extension/manifest.json
-# - Chrome/Brave/Edge: chrome://extensions -> Developer Mode -> Load unpacked -> select extension/
+#### 🪟 Windows (PowerShell):
+```powershell
+irm https://raw.githubusercontent.com/Taufiqu/discordRPC/main/install.ps1 | iex
 ```
 
-👉 **[Read Full Developer Guide](docs/INSTALLATION.md#-method-b-developer--manual-installation)**
+#### 🐧 Linux:
+```bash
+curl -fsSL https://raw.githubusercontent.com/Taufiqu/discordRPC/main/install.sh | bash
+```
+
+> **Prefer manual zip download?** Download `discord_rpc_host-*.zip` from [Releases](https://github.com/Taufiqu/discordRPC/releases), extract it, and double-click `register_host.bat` (Windows) or execute `./register_host.sh` (Linux).
+
+👉 *Need more details or manual developer instructions? See the **[Detailed Installation Guide](docs/INSTALLATION.md)**.*
 
 ---
 
@@ -112,7 +88,7 @@ discordRPC/
 ├── .github/
 │   ├── ISSUE_TEMPLATE/        # Structured issue templates for bugs and features
 │   └── workflows/
-│       └── build-and-sign.yml # CI/CD for automated AMO signing & release builds
+│       └── build-and-sign.yml # CI/CD for automated AMO signing & GitHub releases
 ├── docs/
 │   └── INSTALLATION.md        # Comprehensive installation guide (User & Dev)
 ├── extension/                 # Browser Extension (Manifest V3)
@@ -134,6 +110,10 @@ discordRPC/
 │   ├── register_host.bat      # Windows batch helper
 │   ├── unregister_host.sh     # Linux removal script
 │   └── unregister_host.ps1    # Windows PowerShell removal script
+├── install.sh                 # 1-liner Linux installer
+├── install.ps1                # 1-liner Windows installer
+├── uninstall.sh               # 1-liner Linux uninstaller
+├── uninstall.ps1              # 1-liner Windows uninstaller
 ├── package_extension.py       # Helper for packaging release zip archives
 ├── CONTRIBUTING.md            # Guidelines for open-source contributors
 ├── LICENSE                    # MIT License
@@ -157,7 +137,7 @@ discordRPC/
 <summary><b>2. Extension popup says "Disconnected"</b></summary>
 
 - Ensure Node.js is installed and accessible in your system `PATH` (`node -v`).
-- Re-run the registration script (`./host/register_host.sh` on Linux or `register_host.bat` on Windows) to verify host manifest paths point to valid executable locations.
+- Re-run the installer or registration script to verify host manifest paths point to valid executable locations.
 - Verify that `host/node_modules` exists by running `npm install` inside the `host/` folder.
 </details>
 
