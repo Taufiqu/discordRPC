@@ -27,6 +27,55 @@ A lightweight, high-performance browser extension (Manifest V3) paired with a lo
 
 ---
 
+## 🚀 Installation & Setup
+
+Choose your preferred path below. For complete step-by-step instructions, see the **[Detailed Installation Guide](docs/INSTALLATION.md)**.
+
+### 👤 Option A: General User Installation (No Git / Coding Needed)
+
+1. **Install Extension:**
+   - **Firefox:** Download the signed `.xpi` file from [Releases](https://github.com/Taufiqu/discordRPC/releases) and drag-and-drop it into Firefox (or install directly from Firefox Add-ons).
+   - **Chromium (Chrome / Brave / Edge):** Download `extension.zip` from [Releases](https://github.com/Taufiqu/discordRPC/releases), unpack it, and load it via `chrome://extensions` (Developer Mode ➔ Load unpacked).
+2. **Register the Local Discord Bridge:**
+   - Download the bridge files from [Releases](https://github.com/Taufiqu/discordRPC/releases).
+   - **Windows:** Double-click `register_host.bat`.
+   - **Linux:** Run `./register_host.sh` in terminal.
+3. **Play Music:**
+   - Make sure Discord Desktop is open and your activity status is enabled.
+   - Open [music.youtube.com](https://music.youtube.com/) and play your favorite tracks!
+
+👉 **[Read Full User Guide](docs/INSTALLATION.md#-method-a-general-user-installation-recommended)**
+
+---
+
+### 💻 Option B: Developer & Manual Setup
+
+For developers who want to modify code, build locally, or contribute:
+
+```bash
+# 1. Clone repository
+git clone https://github.com/Taufiqu/discordRPC.git
+cd discordRPC
+
+# 2. Install host dependencies & register bridge
+cd host
+npm install
+
+# Linux:
+chmod +x register_host.sh host.sh && ./register_host.sh
+
+# Windows (PowerShell):
+powershell -ExecutionPolicy Bypass -File register_host.ps1
+
+# 3. Load extension in Developer Mode
+# - Firefox: about:debugging -> Load Temporary Add-on -> select extension/manifest.json
+# - Chrome/Brave/Edge: chrome://extensions -> Developer Mode -> Load unpacked -> select extension/
+```
+
+👉 **[Read Full Developer Guide](docs/INSTALLATION.md#-method-b-developer--manual-installation)**
+
+---
+
 ## 🏗️ Architecture & How It Works
 
 ```
@@ -56,77 +105,6 @@ A lightweight, high-performance browser extension (Manifest V3) paired with a lo
 
 ---
 
-## 📋 Prerequisites
-
-Before installing, make sure your system meets the following requirements:
-
-1. **[Node.js](https://nodejs.org/)** (v18.0.0 or higher recommended).
-2. **Discord Desktop Client** (Discord Stable, PTB, or Canary).
-   > *Note:* Discord Web in a browser cannot receive local IPC Rich Presence events. The native Discord desktop app must be running.
-3. **Discord Activity Settings Enabled**:
-   - Open Discord ➔ **User Settings** (⚙️) ➔ **Activity Privacy**.
-   - Enable **"Display current activity as a status message"**.
-
----
-
-## 🚀 Quick Start & Installation
-
-### Step 1: Clone the Repository
-
-```bash
-git clone https://github.com/Taufiqu/discordRPC.git
-cd discordRPC
-```
-
----
-
-### Step 2: Register Native Messaging Host
-
-The Native Messaging Host connects your browser to Discord's local socket. Automated registration scripts are provided for both Linux and Windows.
-
-#### 🐧 On Linux:
-Run the automated bash registration script:
-```bash
-chmod +x host/register_host.sh host/host.sh
-./host/register_host.sh
-```
-*This installs required `npm` dependencies, resolves absolute script paths, and registers host manifests for Firefox, Google Chrome, Chromium, Brave, and Edge.*
-
-#### 🪟 On Windows:
-Right-click `host/register_host.bat` and select **Run as Administrator**, or execute via PowerShell:
-```powershell
-powershell -ExecutionPolicy Bypass -File host/register_host.ps1
-```
-*This updates the manifest paths and registers the necessary keys into `HKCU:\Software\` registry hives.*
-
----
-
-### Step 3: Install the Browser Extension
-
-#### 🦊 Mozilla Firefox:
-
-- **Option A: Official Release / Signed XPI (Recommended)**
-  1. Go to the [Releases](https://github.com/Taufiqu/discordRPC/releases) page.
-  2. Download the latest `youtube_music_discord_rpc-x.x.x.xpi`.
-  3. Drag and drop the `.xpi` file into Firefox, or visit `about:addons` ➔ click the gear icon (⚙️) ➔ **Install Add-on From File...**.
-
-- **Option B: Temporary Developer Load**
-  1. Open Firefox and navigate to `about:debugging#/runtime/this-firefox`.
-  2. Click **Load Temporary Add-on...**.
-  3. Select the `extension/manifest.json` file.
-
-#### 🌐 Google Chrome / Brave / Edge (Chromium):
-
-1. Open your browser's extension management page:
-   - Chrome: `chrome://extensions`
-   - Brave: `brave://extensions`
-   - Edge: `edge://extensions`
-2. Enable **Developer mode** (toggle in the top-right corner).
-3. Click **Load unpacked** in the top-left toolbar.
-4. Select the `extension/` folder inside this repository.
-
----
-
 ## 📁 Repository Structure
 
 ```
@@ -135,6 +113,8 @@ discordRPC/
 │   ├── ISSUE_TEMPLATE/        # Structured issue templates for bugs and features
 │   └── workflows/
 │       └── build-and-sign.yml # CI/CD for automated AMO signing & release builds
+├── docs/
+│   └── INSTALLATION.md        # Comprehensive installation guide (User & Dev)
 ├── extension/                 # Browser Extension (Manifest V3)
 │   ├── background/
 │   │   └── service_worker.js  # Manages Native Host lifecycle & message relay
@@ -177,7 +157,7 @@ discordRPC/
 <summary><b>2. Extension popup says "Disconnected"</b></summary>
 
 - Ensure Node.js is installed and accessible in your system `PATH` (`node -v`).
-- Re-run the registration script (`./host/register_host.sh` on Linux or `register_host.ps1` on Windows) to verify host manifest paths point to valid executable locations.
+- Re-run the registration script (`./host/register_host.sh` on Linux or `register_host.bat` on Windows) to verify host manifest paths point to valid executable locations.
 - Verify that `host/node_modules` exists by running `npm install` inside the `host/` folder.
 </details>
 
@@ -186,24 +166,6 @@ discordRPC/
 
 - The extension tracks HTML5 video progress directly from YouTube Music. If you scrub through a track or adjust playback speed, the extension automatically recalibrates timestamps within 1–2 seconds.
 </details>
-
----
-
-## 🧹 Uninstallation
-
-To remove the native messaging host registration from your system:
-
-- **Linux:**
-  ```bash
-  chmod +x host/unregister_host.sh
-  ./host/unregister_host.sh
-  ```
-- **Windows:**
-  Run `host/unregister_host.bat` or run in PowerShell:
-  ```powershell
-  powershell -ExecutionPolicy Bypass -File host/unregister_host.ps1
-  ```
-- Then remove the extension from your browser's Add-ons / Extensions page.
 
 ---
 
