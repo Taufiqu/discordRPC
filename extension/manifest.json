@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "YouTube Music Discord Rich Presence",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Seamlessly shows your currently playing YouTube Music track on Discord Rich Presence.",
   "permissions": [
     "nativeMessaging",

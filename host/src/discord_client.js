@@ -71,6 +71,12 @@ export class DiscordPresenceManager {
     }
 
     try {
+      // If no timestamps provided (paused state), explicitly clear previous activity first
+      // so Discord wipes out any existing countdown or stopwatch timer
+      if (!payload.startTimestamp && !payload.endTimestamp) {
+        await this.client.user?.clearActivity();
+      }
+
       const activityData = {
         type: 2, // ActivityType.Listening ("Listening to ...")
         details: payload.details ? String(payload.details).substring(0, 128) : undefined,

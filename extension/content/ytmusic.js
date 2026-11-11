@@ -18,15 +18,17 @@
   }
 
   function isPlaybackPaused(video) {
-    // 1. MediaSession API (YouTube Music sets this reliably)
-    if (navigator.mediaSession?.playbackState === 'paused') {
-      return true;
-    }
-    if (navigator.mediaSession?.playbackState === 'playing') {
-      return false;
+    // 1. Direct check on HTML5 video element (ground truth of actual audio/video playback)
+    if (video) {
+      if (!video.paused && !video.ended) {
+        return false;
+      }
+      if (video.paused) {
+        return true;
+      }
     }
 
-    // 2. Play/Pause button aria-label & title
+    // 2. Play/Pause button aria-label & title in ytmusic-player-bar
     const playPauseBtn = document.querySelector('ytmusic-player-bar #play-pause-button');
     if (playPauseBtn) {
       const label = (
@@ -44,9 +46,12 @@
       }
     }
 
-    // 3. Fallback to HTML5 video element state
-    if (video) {
-      return video.paused || video.ended;
+    // 3. Fallback to MediaSession API
+    if (navigator.mediaSession?.playbackState === 'paused') {
+      return true;
+    }
+    if (navigator.mediaSession?.playbackState === 'playing') {
+      return false;
     }
 
     return true;

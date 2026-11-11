@@ -24,7 +24,11 @@ jobs:
       - name: Install web-ext
         run: npm install -g web-ext
 
+      - name: Lint Extension
+        run: web-ext lint --source-dir=extension
+
       - name: Sign Extension with Mozilla AMO
+        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
         env:
           AMO_JWT_ISSUER: ${{ secrets.AMO_JWT_ISSUER }}
           AMO_JWT_SECRET: ${{ secrets.AMO_JWT_SECRET }}
@@ -38,6 +42,7 @@ jobs:
             --artifacts-dir=artifacts
 
       - name: Upload Signed XPI Artifact
+        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@v4
         with:
           name: signed-firefox-extension
